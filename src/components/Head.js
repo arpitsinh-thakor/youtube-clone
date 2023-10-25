@@ -6,6 +6,8 @@ import { YOUTUBE_SEARCH_API } from "../utils/contants";
 const Head = () => {
 
     const[searchQuery, setSearchQuery] = useState("");
+    const[suggestions, setSuggestions] = useState([]);
+    const[showSuggestions, setShowSuggestions] = useState(false);
 
     const dispath = useDispatch();
     const toogleMenuHandler = ()=>{
@@ -25,7 +27,8 @@ const Head = () => {
         // console.log(searchQuery);    
         const data = await fetch(YOUTUBE_SEARCH_API + searchQuery)
         const json = await data.json();
-        console.log(json[1]);
+        // console.log(json[1]);
+        setSuggestions(json[1]);
     }
 
     return (
@@ -42,15 +45,34 @@ const Head = () => {
                 alt="YT logo" />
         </div>
         <div className="col-span-8 self-center">
-            <input
-                className="w-1/2 border border-black rounded-l-full p-2"
-                type="text"
-                value= {searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                 />
-            <button
-                className="border border-black rounded-r-full p-2 bg-gray-200"
-            >🔎</button>
+            <div>
+                <input
+                    className="w-1/2 border border-black rounded-l-full p-2 m-2"
+                    type="text"
+                    value= {searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() => setShowSuggestions(false)}
+                    />
+                <button
+                    className="border border-black rounded-r-full p-2 bg-gray-200"
+                >🔎</button>
+
+                {
+                    showSuggestions && (
+                        <div className="fixed w-1/3 bg-white rounded-lg border border-gray-200">
+                            <ul className="p-2 m-2">
+                                {
+                                    suggestions.map(suggestion => (
+                                        <li key={suggestion} className="shadow-sm hover:bg-gray-400">
+                                            🔎 {suggestion}</li>
+                                    ))
+                                }
+                            </ul>
+                        </div>
+                    )
+                }
+            </div>
         </div>
         <div className="col-span-2">
             <img
